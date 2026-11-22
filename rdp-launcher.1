@@ -1,0 +1,101 @@
+.TH RDP-LAUNCHER 1 "2026-11-21" "rdp-launcher 0.0.7" "User Commands"
+.SH NAME
+rdp-launcher \- open a remote desktop to a saved machine
+.SH SYNOPSIS
+.B rdp-launcher
+.I host
+.br
+.B rdp-launcher
+.BR pick " | " new " | " list " | " doctor
+.br
+.B rdp-launcher
+.BR test " | " add " | " remove " | " set-password " | " forget-password " | " connect
+.I host
+.SH DESCRIPTION
+Each machine is a small text file,
+.IR $XDG_CONFIG_HOME/rdp-launcher/hosts/host.conf
+(default
+.IR ~/.config/rdp-launcher/hosts/ ).
+.B rdp-launcher
+tries the host's addresses in order, uses the first one that answers, takes the
+password from the system password store, and starts FreeRDP (or, on macOS,
+Microsoft Windows App). Options, including the password, reach FreeRDP through a
+pipe, never on the command line.
+.SH COMMANDS
+.TP
+.I host
+Connect.
+.TP
+.B pick
+Show a dialog: \(lqNew connection\&...\(rq, the saved hosts (most recently used
+first), and \(lqRemove a saved connection\&...\(rq. Missing usernames and
+passwords are asked for in dialogs; a password is kept only when you choose
+\(lqSave & Connect\(rq. Errors appear as dialogs.
+.TP
+.B new
+Ask for an address (\fIhost\fR, \fIhost\fR:\fIport\fR or [\fIv6\fR]:\fIport\fR),
+save it as a host, and connect.
+.TP
+.BI open " file.rdp"
+Connect using an .rdp file (also accepted as the only argument). The host is
+added to the saved list with an
+.B rdpfile
+entry, and FreeRDP loads the file's other settings.
+.TP
+.BI remove " host"
+Delete a saved host and its stored password.
+.TP
+.B list
+List hosts and whether each answers now.
+.TP
+.BI test " host"
+Probe every address of a host and report each one. Does not log in.
+.TP
+.BI add " host"
+Create a host file from the built-in template and open it in
+.BR $VISUAL / $EDITOR .
+.TP
+.BI set-password " host"
+Store the RDP password (macOS Keychain via
+.BR security ;
+elsewhere the Secret Service via
+.BR secret-tool ).
+The tool itself prompts for the password, with echo off.
+.TP
+.BI forget-password " host"
+Remove the stored password.
+.TP
+.B doctor
+Report what this machine has: config dir, FreeRDP binary, password tool, dialog tool.
+.SH HOST FILE
+.nf
+name      = My PC
+addresses = mypc.local 192.168.1.30
+port      = 3389
+user      = me
+client    = freerdp            # or windows-app (macOS)
+args      = /dynamic-resolution
+.fi
+.PP
+A
+.B #
+at the start of a line or after a blank starts a comment. Values in
+.B addresses
+and
+.B args
+are split on blanks (no quoting).
+.SH ENVIRONMENT
+.TP
+.B RDP_LAUNCHER_FREERDP
+FreeRDP binary to use instead of searching for sdl-freerdp3, sdl-freerdp, xfreerdp3, xfreerdp.
+.TP
+.BR XDG_CONFIG_HOME ", " XDG_STATE_HOME
+Base directories for host files and for the per-host FreeRDP log written by
+.BR pick .
+.SH EXIT STATUS
+0 ok, 1 failure, 2 usage, 3 host file problem, 4 host unreachable,
+5 no RDP client, 6 password store problem.
+.SH SEE ALSO
+.BR xfreerdp (1),
+.BR secret-tool (1),
+.BR security (1)

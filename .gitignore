@@ -1,0 +1,12 @@
+# Private working notes (real hostnames, LAN addresses, test history)
+dev-notes/
+
+# Build output
+*.o
+/rdp-launcher
+desktop/.launcher.tmp
+
+# OS / editor clutter
+.DS_Store
+._*
+*.swp

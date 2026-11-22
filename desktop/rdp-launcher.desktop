@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=RDP Launcher
+Comment=Open a remote desktop to a saved machine or an .rdp file
+Exec=@BINDIR@/rdp-launcher pick %f
+Icon=@ICON@
+Terminal=false
+Categories=Network;RemoteAccess;
+MimeType=application/x-rdp;

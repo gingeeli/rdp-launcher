@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- macOS bundle for rdp-launcher: the executable IS the CLI binary, which
+     runs `pick` when opened from Finder. It stays alive for the whole session,
+     so macOS's Local Network permission (granted to this app) keeps covering
+     it and FreeRDP. LSUIElement: no Dock icon of its own (FreeRDP shows one). -->
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>         <string>rdp-launcher</string>
+	<key>CFBundleIdentifier</key>         <string>local.rdp-launcher</string>
+	<key>CFBundleName</key>               <string>RDP Launcher</string>
+	<key>CFBundleDisplayName</key>        <string>RDP Launcher</string>
+	<key>CFBundlePackageType</key>        <string>APPL</string>
+	<key>CFBundleShortVersionString</key> <string>@VERSION@</string>
+	<key>CFBundleVersion</key>            <string>@VERSION@</string>
+	<key>CFBundleIconFile</key>           <string>AppIcon</string>
+	<key>LSUIElement</key>                <true/>
+	<key>LSMinimumSystemVersion</key>     <string>11.0</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>RDP Launcher connects to remote desktops on your local network.</string>
+</dict>
+</plist>
