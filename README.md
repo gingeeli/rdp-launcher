@@ -89,6 +89,7 @@ user      = me
 client    = freerdp                    # or windows-app (macOS only)
 args      = /dynamic-resolution        # extra FreeRDP options
 rdpfile   = /path/to/mypc.rdp          # optional: FreeRDP also loads its settings
+env       = SDL_RENDER_VSYNC=1         # optional: NAME=value added to FreeRDP's environment
 ```
 
 Logs live in `~/.local/state/rdp-launcher/`: `rdp-launcher.log` (timestamped events, never passwords) and one FreeRDP log per computer.
@@ -106,7 +107,7 @@ You'll be asked twice: first for the Remote Login credentials, then for your nor
 ## Platform notes
 
 **macOS**
-- ⚠️ **Known macOS crash (whole-system restart).** On one Apple Silicon Mac (M3 Max, macOS 15.8.1), running sessions has restarted the computer three times. The cause is a kernel panic in Apple's display driver, not in RDP Launcher or FreeRDP: `"mismatched swapID's" @UnifiedPipeline.cpp`, in `WindowServer` / `IOMobileGraphicsFamily`. The main screen was an external 4K display at 240 Hz in scaled mode. Ordinary apps can't crash macOS by themselves, so this is a macOS bug that FreeRDP's window happens to trigger on that setup. It never happened in a macOS virtual machine, which uses a virtual GPU instead of the real display hardware. If you see it, save your work before connecting, try a 60 Hz refresh rate or the built-in screen only, and report it to Apple with Feedback Assistant (the panic report is in `/Library/Logs/DiagnosticReports/`).
+- ⚠️ **Known macOS crash (whole-system restart).** On one Apple Silicon Mac (M3 Max, macOS 15.8.1), running sessions has restarted the computer three times. The cause is a kernel panic in Apple's display driver, not in RDP Launcher or FreeRDP: `"mismatched swapID's" @UnifiedPipeline.cpp`, in `WindowServer` / `IOMobileGraphicsFamily`. The main screen was an external 4K display at 240 Hz in scaled mode. Ordinary apps can't crash macOS by themselves, so this is a macOS bug that FreeRDP's window happens to trigger on that setup. It never happened in a macOS virtual machine, which uses a virtual GPU instead of the real display hardware. Since 0.0.8, RDP Launcher starts FreeRDP on macOS with `SDL_RENDER_VSYNC=1`, so frames are shown in step with the display instead of as soon as they're ready. In first tests with 0.0.8, the same Mac ran sessions on the same 240 Hz display without a crash, but that's minutes of use so far, not weeks. If you still see the crash, save your work before connecting, try 120 Hz, 60 Hz or the built-in screen only, and report it to Apple with Feedback Assistant (the panic report is in `/Library/Logs/DiagnosticReports/`).
 - The app asks once for **Local Network** permission ("find devices on your local network"). It keeps retrying for 15 s while the prompt is up. The app stays running during a session, because macOS ties the permission to the running app.
 - Rebuilding the app may make macOS ask again.
 - `.rdp` files open through the app's **Open .rdp…** button. Finder double-click isn't supported, because Finder delivers files through Apple Events, which a plain C program doesn't receive.

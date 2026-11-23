@@ -38,6 +38,20 @@ port      = 99999
 EOF
 expect 3 "port out of range"          "$BIN" test broken
 
+cat >"$XDG_CONFIG_HOME/rdp-launcher/hosts/envok.conf" <<'EOF'
+addresses = 127.0.0.1
+port      = 1
+env       = SDL_RENDER_VSYNC=0 FOO=a=b
+EOF
+expect 4 "env line accepted"          "$BIN" test envok
+
+cat >"$XDG_CONFIG_HOME/rdp-launcher/hosts/envbad.conf" <<'EOF'
+addresses = 127.0.0.1
+port      = 1
+env       = NOEQUALS
+EOF
+expect 3 "env without = rejected"     "$BIN" test envbad
+
 cat >"$XDG_CONFIG_HOME/rdp-launcher/hosts/noaddr.conf" <<'EOF'
 name = Nothing
 EOF

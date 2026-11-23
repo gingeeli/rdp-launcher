@@ -52,6 +52,13 @@ const char *plat_unreach_hint(void)
 }
 /* Long enough to read and answer the "find devices on your local network" prompt. */
 int plat_permission_wait_s(void) { return 15; }
+
+/* SDL draws FreeRDP's window with Metal and by default hands each frame to the
+ * display as soon as it is ready (vsync off). On macOS 15 with a 240 Hz external
+ * display that has been followed by kernel panics in Apple's display driver
+ * ("mismatched swapID's"). Presenting in step with the display is the mitigation.
+ * A value already in the environment, or a host's env line, takes precedence. */
+void plat_client_env(void) { setenv("SDL_RENDER_VSYNC", "1", 0); }
 const char *plat_picker(void) { return have("osascript") ? "osascript" : NULL; }
 
 int plat_secret_get(const char *key, char *out, size_t n)
@@ -537,6 +544,7 @@ const char *plat_secret_hint(void)
 }
 const char *plat_unreach_hint(void) { return ""; }
 int plat_permission_wait_s(void) { return 0; }
+void plat_client_env(void) { }
 const char *plat_picker(void)
 {
 	if (have("zenity"))

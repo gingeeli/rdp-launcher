@@ -1,7 +1,7 @@
 # rdp-launcher: plain POSIX make (GNU make and BSD make both work).
 # OS differences are handled in C (src/platform.c), not here.
 
-VERSION = 0.0.7
+VERSION = 0.0.8
 
 PREFIX  = $(HOME)/.local
 BINDIR  = $(PREFIX)/bin

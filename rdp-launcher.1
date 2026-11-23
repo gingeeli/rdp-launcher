@@ -1,4 +1,4 @@
-.TH RDP-LAUNCHER 1 "2026-11-21" "rdp-launcher 0.0.7" "User Commands"
+.TH RDP-LAUNCHER 1 "2026-11-23" "rdp-launcher 0.0.8" "User Commands"
 .SH NAME
 rdp-launcher \- open a remote desktop to a saved machine
 .SH SYNOPSIS
@@ -75,6 +75,7 @@ port      = 3389
 user      = me
 client    = freerdp            # or windows-app (macOS)
 args      = /dynamic-resolution
+env       = SDL_RENDER_VSYNC=1  # NAME=value, added to FreeRDP's environment
 .fi
 .PP
 A
@@ -82,8 +83,16 @@ A
 at the start of a line or after a blank starts a comment. Values in
 .B addresses
 and
-.B args
+.BR args " and " env
 are split on blanks (no quoting).
+.PP
+On macOS, FreeRDP is started with
+.B SDL_RENDER_VSYNC=1
+(frames shown in step with the display) unless the environment or the host's
+.B env
+line sets it; see the README's macOS notes. Use
+.B env = SDL_RENDER_VSYNC=0
+to turn it off.
 .SH ENVIRONMENT
 .TP
 .B RDP_LAUNCHER_FREERDP

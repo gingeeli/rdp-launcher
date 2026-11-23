@@ -13,6 +13,7 @@
 
 #define RL_MAX_ADDRS 8
 #define RL_MAX_ARGS  16
+#define RL_MAX_ENV   8
 #define RL_STR       256
 #define RL_KEY       64
 #define RL_PATH      1024
@@ -41,6 +42,8 @@ struct rl_host {
 	char args[RL_MAX_ARGS][RL_STR];
 	int  nargs;
 	char rdpfile[RL_PATH];        /* optional .rdp file whose settings FreeRDP also loads */
+	char env[RL_MAX_ENV][RL_STR]; /* NAME=value pairs added to FreeRDP's environment */
+	int  nenv;
 };
 
 /* util.c */
@@ -90,6 +93,7 @@ const char *plat_secret_tool(void);        /* NULL if none */
 const char *plat_secret_hint(void);
 const char *plat_unreach_hint(void);       /* extra text for "can't reach" in the app */
 int  plat_permission_wait_s(void);         /* GUI retry window for a first LAN connect */
+void plat_client_env(void);                /* OS defaults for FreeRDP's environment */
 int  plat_secret_get(const char *key, char *out, size_t n); /* 0 found, 1 none, -1 no tool */
 int  plat_secret_set(const char *key);     /* interactive; 0 ok */
 int  plat_secret_put(const char *key, const char *pw); /* non-interactive; 0 ok */

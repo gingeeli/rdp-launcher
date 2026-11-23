@@ -138,7 +138,7 @@ int rl_host_load(const char *key, struct rl_host *h)
 	char path[RL_PATH], line[1024];
 	char *k, *v, *eq;
 	FILE *f;
-	int lineno = 0, bad = 0;
+	int lineno = 0, bad = 0, i;
 	long port;
 	char *end;
 
@@ -209,6 +209,15 @@ int rl_host_load(const char *key, struct rl_host *h)
 			h->nargs = split(v, h->args, RL_MAX_ARGS);
 			if (h->nargs < 0)
 				bad = 1, rl_err("%s:%d: at most %d args", path, lineno, RL_MAX_ARGS);
+		} else if (!strcmp(k, "env")) {
+			h->nenv = split(v, h->env, RL_MAX_ENV);
+			if (h->nenv < 0)
+				bad = 1, rl_err("%s:%d: at most %d env entries", path, lineno, RL_MAX_ENV);
+			for (i = 0; i < h->nenv; i++)
+				if (h->env[i][0] == '=' || !strchr(h->env[i], '=')) {
+					bad = 1, rl_err("%s:%d: env entries must be NAME=value", path, lineno);
+					break;
+				}
 		} else if (!strcmp(k, "rdpfile")) {
 			if (rl_copy(h->rdpfile, sizeof h->rdpfile, v))
 				bad = 1, rl_err("%s:%d: rdpfile path too long", path, lineno);
@@ -288,6 +297,12 @@ int rl_host_save(const struct rl_host *h)
 	for (i = 0; i < h->nargs; i++)
 		fprintf(f, " %s", h->args[i]);
 	fprintf(f, "\n");
+	if (h->nenv > 0) {
+		fprintf(f, "env       =");
+		for (i = 0; i < h->nenv; i++)
+			fprintf(f, " %s", h->env[i]);
+		fprintf(f, "\n");
+	}
 	if (h->rdpfile[0])
 		fprintf(f, "rdpfile   = %s\n", h->rdpfile);
 	if (fclose(f) || rename(tmp, path)) {

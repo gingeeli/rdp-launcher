@@ -114,6 +114,24 @@ static int write_args(int fd, const struct rl_host *h, int ai, const char *pw)
 	return bad ? -1 : 0;
 }
 
+/* Environment for FreeRDP: the OS defaults, then the host's own env entries. */
+static void set_client_env(const struct rl_host *h)
+{
+	char kv[RL_STR], *eq;
+	int i;
+
+	plat_client_env();
+	for (i = 0; i < h->nenv; i++) {
+		rl_copy(kv, sizeof kv, h->env[i]);
+		eq = strchr(kv, '=');
+		if (!eq)
+			continue;
+		*eq = '\0';
+		if (setenv(kv, eq + 1, 1))
+			rl_note("cannot set %s: %s", kv, strerror(errno));
+	}
+}
+
 /* GUI launch: run FreeRDP with output to a log; report it only if the
  * session never started. If the password came from the store, offer to
  * forget it on failure. */
@@ -312,6 +330,7 @@ int rl_connect(const struct rl_host *hin, int ai)
 	argv[0] = exe;
 	argv[1] = fdarg;
 	argv[2] = NULL;
+	set_client_env(h);
 
 	if (rl_gui)
 		return run_logged(h, exe, argv, pfd[0], from_store);
